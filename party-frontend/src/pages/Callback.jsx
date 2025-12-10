@@ -6,35 +6,31 @@ export default function Callback({ onUserLoaded }) {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const code = searchParams.get('code');
+    // Le backend a déjà géré l'auth
+    // On récupère juste les infos user depuis l'URL ou on fait un appel /me
     
-    if (code) {
-      // Le backend gère déjà l'échange du code
-      // On récupère juste les paramètres de l'URL de retour
-      
-      // Simuler une requête au callback (déjà géré côté backend)
-      fetch(`http://localhost:8000/auth/callback?code=${code}`)
+    const spotifyId = searchParams.get('spotify_id');
+    
+    if (spotifyId) {
+      // Récupérer les infos user
+      fetch(`http://localhost:8000/auth/me?spotify_id=${spotifyId}`)
         .then(res => res.json())
         .then(data => {
-          if (data.user) {
-            onUserLoaded(data.user);
-            navigate('/');
-          }
-        })
-        .catch(err => {
-          console.error('Erreur callback:', err);
+          onUserLoaded(data);
           navigate('/');
-        });
+        })
+        .catch(() => navigate('/'));
     } else {
+      // Sinon on redirige direct
       navigate('/');
     }
-  }, [searchParams, navigate, onUserLoaded]);
+  }, []);
 
   return (
     <div style={styles.container}>
       <div style={styles.loading}>
-        <h2>🎵 Connexion à Spotify...</h2>
-        <p>Veuillez patienter</p>
+        <h2>🎵 Connexion réussie !</h2>
+        <p>Redirection...</p>
       </div>
     </div>
   );
