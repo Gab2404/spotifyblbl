@@ -76,6 +76,22 @@ export const roomService = {
   nextRound: async (code) => {
     const response = await api.post(`/rooms/${code}/next-round`);
     return response.data;
+  },
+
+  // 🎵 NOUVEAU : Fonctions de playback
+  playTrack: async (code, deviceId) => {
+    const response = await api.post(`/rooms/${code}/play?device_id=${deviceId}`);
+    return response.data;
+  },
+
+  pauseTrack: async (code, deviceId) => {
+    const response = await api.post(`/rooms/${code}/pause?device_id=${deviceId}`);
+    return response.data;
+  },
+
+  resumeTrack: async (code, deviceId) => {
+    const response = await api.post(`/rooms/${code}/resume?device_id=${deviceId}`);
+    return response.data;
   }
 };
 

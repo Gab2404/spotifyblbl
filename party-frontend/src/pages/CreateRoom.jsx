@@ -19,11 +19,22 @@ export default function CreateRoom({ user }) {
 
     try {
       const room = await roomService.createRoom(user.spotify_id, threshold);
+      console.log('✅ Room créée:', room);
+      
+      // Vérifier que le code existe
+      if (!room.code) {
+        console.error('❌ Pas de code dans la réponse:', room);
+        setError('Erreur: pas de code de room reçu');
+        setLoading(false);
+        return;
+      }
+      
+      // Rediriger vers la room
+      console.log(`🚀 Redirection vers /room/${room.code}`);
       navigate(`/room/${room.code}`);
     } catch (err) {
       console.error('Erreur création room:', err);
       setError('Erreur lors de la création de la room');
-    } finally {
       setLoading(false);
     }
   };

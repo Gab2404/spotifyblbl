@@ -13,10 +13,16 @@ def get_current_user(access_token: str) -> dict:
     response = requests.get("https://api.spotify.com/v1/me", headers=headers)
 
     if response.status_code != 200:
+        # 🔥 CORRECTION : Gérer les réponses vides
+        try:
+            error_data = response.json()
+        except:
+            error_data = {"message": "Empty response from Spotify"}
+        
         return {
             "error": "spotify_api_error",
             "status_code": response.status_code,
-            "details": response.json(),
+            "details": error_data,
         }
 
     return response.json()

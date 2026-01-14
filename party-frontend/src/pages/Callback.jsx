@@ -6,25 +6,28 @@ export default function Callback({ onUserLoaded }) {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Le backend a déjà géré l'auth
-    // On récupère juste les infos user depuis l'URL ou on fait un appel /me
+    const userParam = searchParams.get('user');
     
-    const spotifyId = searchParams.get('spotify_id');
-    
-    if (spotifyId) {
-      // Récupérer les infos user
-      fetch(`http://localhost:8000/auth/me?spotify_id=${spotifyId}`)
-        .then(res => res.json())
-        .then(data => {
-          onUserLoaded(data);
-          navigate('/');
-        })
-        .catch(() => navigate('/'));
+    if (userParam) {
+      try {
+        // Décoder et parser les infos user
+        const user = JSON.parse(decodeURIComponent(userParam));
+        console.log('✅ User récupéré:', user);
+        
+        // Sauvegarder dans le localStorage via le hook
+        onUserLoaded(user);
+        
+        // Rediriger vers la home
+        navigate('/');
+      } catch (err) {
+        console.error('❌ Erreur parsing user:', err);
+        navigate('/');
+      }
     } else {
-      // Sinon on redirige direct
+      console.warn('⚠️ Pas de paramètre user dans l\'URL');
       navigate('/');
     }
-  }, []);
+  }, [searchParams, navigate, onUserLoaded]);
 
   return (
     <div style={styles.container}>
